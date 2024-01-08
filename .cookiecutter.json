@@ -1,0 +1,16 @@
+{
+  "_checkout": "2022.6.3",
+  "_output_dir": "C:\\Users\\student.TOP\\Documents\\Python31\\orders_hypermodern",
+  "_repo_dir": "C:\\Users\\student.TOP\\.cookiecutters\\cookiecutter-hypermodern-python",
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Yarhushin Oleg",
+  "copyright_year": "2024",
+  "development_status": "Development Status :: 2 - Pre-Alpha",
+  "email": "felix87_87@mail.ru",
+  "friendly_name": "Warehouse Ddd",
+  "github_user": "0.1.0",
+  "license": "GPL-3.0",
+  "package_name": "warehouse_ddd",
+  "project_name": "warehouse-ddd",
+  "version": "0.1.0"
+}
