@@ -1,20 +1,24 @@
 from datetime import date
-from typing import Optional, Self
-from werkzeug.security import generate_password_hash, check_password_hash
+from typing import Self
+
 from flask_login import UserMixin
-from exceptions import OutOfStock
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
+
+from .exceptions import OutOfStock
+
 
 class User(UserMixin):
-    def __init__(self, username: str, password:str):
+    def __init__(self, username: str, password: str):
         self.username = username
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str):
-        return check_password_hash(self.password_hash, password)    
+        return check_password_hash(self.password_hash, password)
 
 
 class OrderLine:
-    """Товарная позиция"""
+    """Товарная позиция."""
 
     def __init__(self, orderid: str, sku: str, qty: int) -> None:
         self.orderid = orderid
@@ -29,9 +33,9 @@ class OrderLine:
 
 
 class Batch:
-    """Партия"""
+    """Партия."""
 
-    def __init__(self, reference: str, sku: str, qty: int, eta: Optional[date] = None):
+    def __init__(self, reference: str, sku: str, qty: int, eta: date | None = None):
         self.reference = reference
         self.sku = sku
         self.initial_quantity = qty
