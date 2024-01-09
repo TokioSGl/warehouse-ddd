@@ -29,12 +29,13 @@ jobs:
 
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+          cache: "poetry"
 
       - name: Upgrade pip
         run: |
@@ -57,9 +58,10 @@ jobs:
 
       - name: Install Nox
         run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          nox --version
+          poetry install
+          # pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          # pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          # nox --version
 
       - name: Compute pre-commit cache key
         if: matrix.session == 'pre-commit'
@@ -108,10 +110,10 @@ jobs:
     needs: tests
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -127,9 +129,10 @@ jobs:
 
       - name: Install Nox
         run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          nox --version
+          poetry install
+          # pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
+          # pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          # nox --version
 
       - name: Download coverage data
         uses: actions/download-artifact@v3
