@@ -59,9 +59,9 @@ jobs:
       - name: Install Nox
         run: |
           poetry install
-          # pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          # pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          # nox --version
+          pipx install nox
+          pipx inject nox nox-poetry
+          nox --version
 
       - name: Compute pre-commit cache key
         if: matrix.session == 'pre-commit'
@@ -130,9 +130,9 @@ jobs:
       - name: Install Nox
         run: |
           poetry install
-          # pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          # pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          # nox --version
+          pipx install nox
+          pipx inject nox nox-poetry
+          nox --version
 
       - name: Download coverage data
         uses: actions/download-artifact@v3
