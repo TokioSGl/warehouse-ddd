@@ -1,23 +1,23 @@
-import model
-from admin.admin import admin
-from api.api import api
-from auth.auth import auth
-from config import build_db_uri
-from db_tables import metadata
-from db_tables import start_mappers
 from flask import Flask
 from flask_login import LoginManager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from werkzeug.security import gen_salt
 
+from warehouse_ddd import config
+from warehouse_ddd import db_tables
+from warehouse_ddd import model
+from warehouse_ddd.admin.admin import admin
+from warehouse_ddd.api.api import api
+from warehouse_ddd.auth.auth import auth
 
-engine = create_engine(build_db_uri(".env"))
+
+engine = create_engine(config.build_db_uri(".env"))
 get_session = sessionmaker(bind=engine)
 
 try:
-    metadata.create_all(bind=engine)
-    start_mappers()
+    db_tables.metadata.create_all(bind=engine)
+    db_tables.start_mappers()
 except Exception:
     pass
 
@@ -40,6 +40,3 @@ def load_user(user_id: str):
 app.register_blueprint(auth, url_prefix="/auth")
 app.register_blueprint(admin, url_prefix="/admin")
 app.register_blueprint(api, url_prefix="/api")
-
-
-app.run(debug=True)
