@@ -7,10 +7,10 @@ services:
     environment:
       POSTGRES_PASSWORD: 5807590
       POSTGRES_USER: user
-    #   POSTGRES_DB: orders
-    # volumes:
-    #   - orders:/var/lib/postgresql/data
-    # ports:
-    #   - "5432:5432"
+      POSTGRES_DB: orders
+    volumes:
+      - orders:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 volumes:
   orders:
