@@ -12,7 +12,5 @@ services:
     #   - orders:/var/lib/postgresql/data
     # ports:
     #   - "5432:5432"
-    env:
-      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/orders
 volumes:
   orders:
