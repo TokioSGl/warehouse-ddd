@@ -98,9 +98,11 @@ jobs:
           restore-keys: |
             ${{ steps.pre-commit-cache.outputs.result }}-
 
+      - uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./src/warehouse_ddd/docker-compose.yml"
+
       - name: Run Nox
-        env:
-          DATABASE_URL: postgres://user:5807590@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/orders
         run: |
           nox --python=${{ matrix.python }}
 
