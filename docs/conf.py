@@ -1,4 +1,5 @@
 """Sphinx configuration."""
+
 project = "Warehouse Ddd"
 author = "Yarhushin Oleg"
 copyright = "2024, Yarhushin Oleg"

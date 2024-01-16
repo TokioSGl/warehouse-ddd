@@ -1,26 +1,20 @@
-from flask import (
-    Blueprint,
-    request,
-    render_template,
-    redirect,
-    flash,
-)
-from flask_login import LoginManager, login_required, login_user, logout_user
-
+from flask import Blueprint
+from flask import render_template
+from flask import request
+from flask_login import login_required
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import model
-import repository
-from config import build_db_uri
+from warehouse_ddd import config
+from warehouse_ddd import model
+from warehouse_ddd import repository
 
 
-admin = Blueprint(
-    "admin", __name__, template_folder="templates"
-)
+admin = Blueprint("admin", __name__, template_folder="templates")
 
-engine = create_engine(build_db_uri(".env"))
+engine = create_engine(config.build_db_uri(".env"))
 get_session = sessionmaker(bind=engine)
+
 
 @admin.route("/batches", methods=["GET", "POST"])
 @login_required
@@ -30,15 +24,15 @@ def admin_batches_view():
 
     if request.method == "POST":
         reference = request.form.get("reference")
-        sku = request.form.get('sku')
-        qty = request.form.get('qty')
-        eta = request.form.get('eta')
+        sku = request.form.get("sku")
+        qty = request.form.get("qty")
+        eta = request.form.get("eta")
         print(reference, sku, qty, eta)
         repo.add(model.Batch(reference, sku, qty, eta))
         session.commit()
 
     batches = repo.list()
-   
+
     return render_template("admin/batches.html", batches=batches)
 
 

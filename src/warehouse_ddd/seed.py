@@ -1,11 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
 import model
 import services
-from repository import SqlAlchemyRepository
 from config import build_db_uri
-from db_tables import start_mappers, metadata
+from db_tables import metadata
+from db_tables import start_mappers
+from repository import SqlAlchemyRepository
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 engine = create_engine(build_db_uri(".env"))
@@ -35,11 +35,11 @@ def seed_db():
 
     repo.add(batch_tables)
     repo.add(batch_chairs)
-    
+
     session.add(model.User("test@gmail.com", "testpassword"))
 
     session.commit()
-   
+
     for line in lines:
         services.allocate(line, repo, session)
 

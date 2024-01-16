@@ -1,21 +1,23 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint
+from flask import jsonify
+from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import repository
-import model
-import services
-import exceptions
-from config import build_db_uri
+from warehouse_ddd import config
+from warehouse_ddd import exceptions
+from warehouse_ddd import model
+from warehouse_ddd import repository
+from warehouse_ddd import services
 
 
-engine = create_engine(build_db_uri(".env"))
+engine = create_engine(config.build_db_uri(".env"))
 get_session = sessionmaker(bind=engine)
 
 api = Blueprint("api", __name__)
 
 
-@api.route("/api/allocate", methods=["POST"])
+@api.route("/allocate", methods=["POST"])
 def allocate_endpoint():
     session = get_session()
     repo = repository.SqlAlchemyRepository(session)
