@@ -8,8 +8,7 @@ from flask_login import logout_user
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from warehouse_ddd import config
-from warehouse_ddd import model
+from warehouse_ddd import config, model
 
 
 auth = Blueprint("auth", __name__, static_folder="static", template_folder="templates")
