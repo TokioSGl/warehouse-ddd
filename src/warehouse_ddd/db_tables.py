@@ -7,7 +7,7 @@ from sqlalchemy import Table
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 
-from . import model
+from warehouse_ddd import model
 
 
 mapper_registry = registry()
@@ -50,7 +50,7 @@ allocations = Table(
 )
 
 
-def start_mappers():
+def start_mappers() -> None:
     lines_mapper = mapper_registry.map_imperatively(model.OrderLine, order_lines)
     mapper_registry.map_imperatively(
         model.Batch,
