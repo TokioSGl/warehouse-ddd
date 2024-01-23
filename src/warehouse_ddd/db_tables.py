@@ -8,6 +8,7 @@ from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 
 from warehouse_ddd import model
+import warehouse_ddd.auth.model
 
 
 mapper_registry = registry()
@@ -64,7 +65,7 @@ def start_mappers() -> None:
         },
     )
     mapper_registry.map_imperatively(
-        model.User,
+        warehouse_ddd.auth.model.User,
         users,
     )
 

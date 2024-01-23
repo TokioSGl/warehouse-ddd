@@ -6,17 +6,13 @@ from flask import request
 from flask import Response
 from flask_login import login_user
 from flask_login import logout_user
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from warehouse_ddd import config, model
 
+from warehouse_ddd import session, model
+from .model import User
 
 auth = Blueprint("auth", __name__, static_folder="static", template_folder="templates")
 
-
-engine = create_engine(config.build_db_uri(".env"))
-get_session = sessionmaker(bind=engine)
 
 
 @auth.route("/login", methods=["GET", "POST"])
@@ -27,8 +23,8 @@ def login() -> str | Response:
     login_field = request.form.get("email")
     password_field = request.form.get("password")
 
-    session = get_session()
-    user = session.query(model.User).where(model.User.username == login_field).first()
+    
+    user = session.SessionManager().query(User).where(User.username == login_field).first()
 
     if user and user.check_password(password_field):
         login_user(user)
@@ -52,14 +48,14 @@ def signup() -> str | Response:
     email_field = request.form.get("email", "")
     password_field = request.form.get("password", "")
 
-    session = get_session()
-    user = session.query(model.User).where(model.User.username == email_field).first()
+    signup_session = session.SessionManager()
+    user = signup_session.query(User).where(User.username == email_field).first()
 
     if user:
         flash("Account already exists. Maybe you want to sign in?", "error")
         return render_template("auth/signup.html")
 
-    session.add(model.User(email_field, password_field))
-    session.commit()
+    signup_session.add(User(email_field, password_field))
+    signup_session.commit()
 
     return redirect("/auth/login")

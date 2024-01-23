@@ -1,23 +1,27 @@
 from warehouse_ddd import exceptions
 from warehouse_ddd import model
-from warehouse_ddd import repository
+from warehouse_ddd import unit_of_work
 
 from sqlalchemy.orm import Session
 
 
+
 def allocate(
-    line: model.OrderLine, repo: repository.AbstractRepository, session: Session
+    line: model.OrderLine, uow: unit_of_work.AbstractUnitOfWork
 ) -> str:
-    batches = repo.list()
+    with uow:
+        batches = uow.batches.list()
 
-    if not any(line.sku == batch.sku for batch in batches):
-        raise exceptions.InvalidSku(f"Invalid sku {line.sku}")
+        if not any(line.sku == batch.sku for batch in batches):
+            raise exceptions.InvalidSku(f"Invalid sku {line.sku}")
 
-    try:
-        batchref = model.allocate(line, batches)
-    except exceptions.OutOfStock:
-        raise
+        try:
+            batchref = model.allocate(line, batches)
+            uow.commit()
+        except exceptions.OutOfStock:
+            raise
+        else:
+            return batchref
+        
 
-    session.commit()
-
-    return batchref
+   

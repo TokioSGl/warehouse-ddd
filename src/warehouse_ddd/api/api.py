@@ -4,28 +4,19 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 from flask import Response
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from warehouse_ddd import config
-from warehouse_ddd import exceptions
-from warehouse_ddd import model
-from warehouse_ddd import repository
-from warehouse_ddd import services
 
 
-engine = create_engine(config.build_db_uri(".env"))
-get_session = sessionmaker(bind=engine)
+from warehouse_ddd import config, exceptions, model, session, unit_of_work, services
+
+
+
 
 api = Blueprint("api", __name__)
 
 
 @api.route("/allocate", methods=["POST"])
 def allocate_endpoint() ->tuple[Response, int]:
-    session = get_session()
-    repo = repository.SqlAlchemyRepository(session)
-
-    
+    uow = unit_of_work.SqlAlchemyUnitOfWork(session.SessionManager())
 
     orderid = cast(str, request.json["orderid"])
     sku = cast(str, request.json["sku"])
@@ -34,7 +25,7 @@ def allocate_endpoint() ->tuple[Response, int]:
     line = model.OrderLine(orderid, sku, qty)
 
     try:
-        batchref = services.allocate(line, repo, session)
+        batchref = services.allocate(line, uow)
     except (exceptions.OutOfStock, exceptions.InvalidSku) as e:
         return jsonify({"message": str(e)}), 400
 

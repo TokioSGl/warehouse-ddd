@@ -3,41 +3,37 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask_login import login_required
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from warehouse_ddd import config
-from warehouse_ddd import model
-from warehouse_ddd import repository
+
+from warehouse_ddd import model, session, unit_of_work
 
 
 admin = Blueprint("admin", __name__, template_folder="templates")
 
-engine = create_engine(config.build_db_uri(".env"))
-get_session = sessionmaker(bind=engine)
 
 
 @admin.route("/batches", methods=["GET", "POST"])
 @login_required
 def admin_batches_view() -> str:
-    session = get_session()
-    repo = repository.SqlAlchemyRepository(session)
+    uow = unit_of_work.SqlAlchemyUnitOfWork(session.SessionManager())
+
 
     if request.method == "POST":
         reference = request.form.get("reference")
         sku = request.form.get("sku")
-        qty = request.form.get("qty")
+        qty = int(request.form.get("qty"))
         eta = request.form.get("eta")
 
         assert isinstance(reference, str)
         assert isinstance(sku, str)
-        assert isinstance(qty, int)
-        assert isinstance(eta, (date, None))
-        
-        repo.add(model.Batch(reference, sku, qty, eta))
-        session.commit()
+       
+        if eta:
+            eta = date(eta)
+        with uow:
+            uow.batches.add(model.Batch(reference, sku, qty, eta))
+        uow.commit()
 
-    batches = repo.list()
+    batches = uow.batches.list()
 
     return render_template("admin/batches.html", batches=batches)
 
@@ -45,9 +41,8 @@ def admin_batches_view() -> str:
 @admin.route("/")
 @login_required
 def admin_view() -> str:
-    session = get_session()
-    repo = repository.SqlAlchemyRepository(session)
-    batches = repo.list()
+    uow = unit_of_work.SqlAlchemyUnitOfWork(session.SessionManager())
+    batches = uow.batches.list()
     allocations = [b.allocations for b in batches]
 
     return render_template("admin/admin.html", orderlines=allocations, batches=batches)

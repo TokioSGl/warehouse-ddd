@@ -1,12 +1,12 @@
-from warehouse_ddd import model, services, config, db_tables, repository
+from warehouse_ddd import model, services, config, db_tables, unit_of_work, auth, session
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import  Session
 
 
 def seed_db(session: Session) -> None:
-    repo = repository.SqlAlchemyRepository(session)
-
+    uow = unit_of_work.SqlAlchemyUnitOfWork(session)
+    
     lines = (
         model.OrderLine("table-001", "table", 10),
         model.OrderLine("table-001", "table", 30),
@@ -18,20 +18,22 @@ def seed_db(session: Session) -> None:
     batch_tables = model.Batch("batch-001", "table", 100, None)
     batch_chairs = model.Batch("batch-002", "chair", 150, None)
 
-    repo.add(batch_tables)
-    repo.add(batch_chairs)
+    with uow:
+        uow.batches.add(batch_tables)
+        uow.batches.add(batch_chairs)
+        
+        for line in lines:
+            services.allocate(line, uow)
 
-    session.add(model.User("test@gmail.com", "testpassword"))
+        uow.commit()
+
+    session.add(auth.model.User("test@gmail.com", "testpassword"))
 
     session.commit()
-
-    for line in lines:
-        services.allocate(line, repo, session)
 
 
 if __name__ == "__main__":
     engine = create_engine(config.build_db_uri(".env"))
-    get_session = sessionmaker(bind=engine)
 
     try:
         db_tables.create_all(bind=engine)
@@ -39,4 +41,4 @@ if __name__ == "__main__":
     except Exception:
         pass
 
-    seed_db(get_session())
+    seed_db(session.SessionManager())

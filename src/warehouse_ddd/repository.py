@@ -29,7 +29,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get(self, reference: str) -> model.Batch:
         batches = self.__session.query(model.Batch)
-        return batches.filter_by(reference=reference).one()
+        return batches.filter_by(reference=reference).first()
 
     def list(self) -> list[model.Batch]:
         return self.__session.query(model.Batch).all()
