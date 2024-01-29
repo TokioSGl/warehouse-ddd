@@ -7,8 +7,14 @@ from sqlalchemy import Table
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 
-from warehouse_ddd import model
+from warehouse_ddd.infastructure import config
 import warehouse_ddd.auth.model
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import  Session
+
+from warehouse_ddd.domain import model
 
 
 mapper_registry = registry()
@@ -69,5 +75,15 @@ def start_mappers() -> None:
         users,
     )
 
+def create_tables():
+    engine = create_engine(config.build_db_uri(".env"))
 
-start_mappers()
+    try:
+        metadata.create_all(bind=engine)
+        start_mappers()
+    except Exception:
+        pass
+
+if __name__ == "__main__":
+    create_tables()
+    start_mappers()

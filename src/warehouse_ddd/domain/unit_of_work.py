@@ -1,7 +1,7 @@
 from typing import Self
 from abc import ABC, abstractmethod
 from sqlalchemy.orm import Session
-from warehouse_ddd.repository import SqlAlchemyRepository, FakeRepository
+from warehouse_ddd.domain.repository import SqlAlchemyRepository, FakeRepository
 
 
 class AbstractUnitOfWork(ABC):

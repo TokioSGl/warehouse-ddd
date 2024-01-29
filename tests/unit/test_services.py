@@ -1,9 +1,9 @@
 import pytest
 
-from warehouse_ddd import exceptions
-from warehouse_ddd import model
-from warehouse_ddd import repository , unit_of_work
-from warehouse_ddd import services
+from warehouse_ddd.domain import exceptions, unit_of_work
+from warehouse_ddd.domain import model
+from warehouse_ddd.domain import repository
+from warehouse_ddd.domain import services
 
 
 def test_returns_allocation_on_valid_sku():

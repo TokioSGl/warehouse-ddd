@@ -6,7 +6,9 @@ from flask import request
 from flask import Response
 
 
-from warehouse_ddd import config, exceptions, model, session, unit_of_work, services
+from warehouse_ddd.infastructure import session
+from warehouse_ddd.domain import exceptions, model, services, unit_of_work
+from warehouse_ddd.infastructure import config
 
 
 

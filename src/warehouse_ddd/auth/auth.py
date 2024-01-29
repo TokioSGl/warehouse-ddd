@@ -8,7 +8,8 @@ from flask_login import login_user
 from flask_login import logout_user
 
 
-from warehouse_ddd import session, model
+from warehouse_ddd.infastructure import session
+from warehouse_ddd.domain import model
 from .model import User
 
 auth = Blueprint("auth", __name__, static_folder="static", template_folder="templates")
